@@ -9,6 +9,7 @@ public class VendingMachine {
     private static final String INSERT_COIN_MESSAGE = "INSERT COIN";
     private static final String THANK_YOU_MESSAGE = "THANK YOU";
     private static final String PRICE_FORMAT = "PRICE $%.2f";
+    private static final String SOLD_OUT_MESSAGE = "SOLD OUT";
 
     // Coin specifications (weight in grams, diameter in mm)
     private static final double QUARTER_WEIGHT = 5.67;
@@ -23,6 +24,14 @@ public class VendingMachine {
     private List<Coin> coinReturn = new ArrayList<>();
     private List<Coin> insertedCoins = new ArrayList<>();
     private String displayMessage = null;
+    private java.util.Map<Product, Integer> inventory = new java.util.HashMap<>();
+
+    public VendingMachine() {
+        // Initialize inventory with 1 of each product for testing
+        inventory.put(Product.COLA, 1);
+        inventory.put(Product.CHIPS, 1);
+        inventory.put(Product.CANDY, 1);
+    }
 
     public String getDisplay() {
         if (displayMessage != null) {
@@ -71,10 +80,18 @@ public class VendingMachine {
 
     public void selectProduct(String product) {
         Product selectedProduct = Product.valueOf(product);
+        int stock = inventory.getOrDefault(selectedProduct, 0);
+        
+        if (stock == 0) {
+            displayMessage = SOLD_OUT_MESSAGE;
+            return;
+        }
+        
         if (currentAmount >= selectedProduct.getPrice()) {
             int change = currentAmount - selectedProduct.getPrice();
             currentAmount = 0;
             insertedCoins.clear();
+            inventory.put(selectedProduct, stock - 1);
             displayMessage = THANK_YOU_MESSAGE;
             if (change > 0) {
                 makeChange(change);

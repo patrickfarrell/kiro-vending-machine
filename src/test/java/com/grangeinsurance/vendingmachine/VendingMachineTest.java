@@ -133,4 +133,28 @@ class VendingMachineTest {
         vendingMachine.returnCoins();
         assertEquals("INSERT COIN", vendingMachine.getDisplay());
     }
+
+    @Test
+    void shouldDisplaySoldOutWhenProductOutOfStock() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS");
+        vendingMachine.getDisplay(); // THANK YOU
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS");
+        assertEquals("SOLD OUT", vendingMachine.getDisplay());
+    }
+
+    @Test
+    void shouldDisplayCurrentAmountAfterSoldOut() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS");
+        vendingMachine.getDisplay(); // THANK YOU
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS");
+        vendingMachine.getDisplay(); // SOLD OUT
+        assertEquals("$0.25", vendingMachine.getDisplay());
+    }
 }
