@@ -5,6 +5,11 @@ import java.util.List;
 
 public class VendingMachine {
 
+    // Display messages
+    private static final String INSERT_COIN_MESSAGE = "INSERT COIN";
+    private static final String THANK_YOU_MESSAGE = "THANK YOU";
+    private static final String PRICE_FORMAT = "PRICE $%.2f";
+
     // Coin specifications (weight in grams, diameter in mm)
     private static final double QUARTER_WEIGHT = 5.67;
     private static final double QUARTER_DIAMETER = 24.26;
@@ -25,7 +30,7 @@ public class VendingMachine {
             return message;
         }
         if (currentAmount == 0) {
-            return "INSERT COIN";
+            return INSERT_COIN_MESSAGE;
         }
         return String.format("$%.2f", currentAmount / 100.0);
     }
@@ -65,13 +70,13 @@ public class VendingMachine {
         Product selectedProduct = Product.valueOf(product);
         if (currentAmount >= selectedProduct.getPrice()) {
             currentAmount -= selectedProduct.getPrice();
-            displayMessage = "THANK YOU";
+            displayMessage = THANK_YOU_MESSAGE;
             if (currentAmount > 0) {
                 // Change will be handled in Make Change feature
             }
             currentAmount = 0;
         } else {
-            displayMessage = String.format("PRICE $%.2f", selectedProduct.getPrice() / 100.0);
+            displayMessage = String.format(PRICE_FORMAT, selectedProduct.getPrice() / 100.0);
         }
     }
 }
