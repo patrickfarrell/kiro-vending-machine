@@ -108,4 +108,14 @@ class VendingMachineTest {
         vendingMachine.selectProduct("CANDY");
         assertEquals("THANK YOU", vendingMachine.getDisplay());
     }
+
+    @Test
+    void shouldReturnChangeWhenProductCostsLessThanAmountInserted() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS"); // $0.50
+        // Should have $0.25 in change
+        assertEquals(1, vendingMachine.getCoinReturn().size());
+    }
 }

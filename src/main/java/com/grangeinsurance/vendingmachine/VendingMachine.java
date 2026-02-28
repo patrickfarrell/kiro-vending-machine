@@ -69,14 +69,29 @@ public class VendingMachine {
     public void selectProduct(String product) {
         Product selectedProduct = Product.valueOf(product);
         if (currentAmount >= selectedProduct.getPrice()) {
-            currentAmount -= selectedProduct.getPrice();
-            displayMessage = THANK_YOU_MESSAGE;
-            if (currentAmount > 0) {
-                // Change will be handled in Make Change feature
-            }
+            int change = currentAmount - selectedProduct.getPrice();
             currentAmount = 0;
+            displayMessage = THANK_YOU_MESSAGE;
+            if (change > 0) {
+                makeChange(change);
+            }
         } else {
             displayMessage = String.format(PRICE_FORMAT, selectedProduct.getPrice() / 100.0);
+        }
+    }
+
+    private void makeChange(int amount) {
+        while (amount >= 25) {
+            coinReturn.add(new Coin(QUARTER_WEIGHT, QUARTER_DIAMETER));
+            amount -= 25;
+        }
+        while (amount >= 10) {
+            coinReturn.add(new Coin(DIME_WEIGHT, DIME_DIAMETER));
+            amount -= 10;
+        }
+        while (amount >= 5) {
+            coinReturn.add(new Coin(NICKEL_WEIGHT, NICKEL_DIAMETER));
+            amount -= 5;
         }
     }
 }
