@@ -24,10 +24,13 @@ public class VendingMachine {
     private List<Coin> coinReturn = new ArrayList<>();
     private List<Coin> insertedCoins = new ArrayList<>();
     private String displayMessage = null;
-    private java.util.Map<Product, Integer> inventory = new java.util.HashMap<>();
+    private java.util.Map<Product, Integer> inventory = new java.util.EnumMap<>(Product.class);
 
     public VendingMachine() {
-        // Initialize inventory with 1 of each product for testing
+        initializeInventory();
+    }
+
+    private void initializeInventory() {
         inventory.put(Product.COLA, 1);
         inventory.put(Product.CHIPS, 1);
         inventory.put(Product.CANDY, 1);
