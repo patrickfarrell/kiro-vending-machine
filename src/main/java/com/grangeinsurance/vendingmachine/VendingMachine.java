@@ -134,17 +134,9 @@ public class VendingMachine {
     }
 
     private boolean canMakeChange() {
-        // Check if we can make change for any product
-        // We need to be able to make change for the smallest possible overpayment
-        // For CANDY (65 cents), if someone pays with 3 quarters (75 cents), we need 10 cents change
-        // For CHIPS (50 cents), if someone pays with 3 quarters (75 cents), we need 25 cents change
-        // For COLA (100 cents), if someone pays with 5 quarters (125 cents), we need 25 cents change
-        
-        // Simplest check: can we make 5 cents (nickel)?
-        if (nickelsInMachine > 0 || dimesInMachine > 0 || quartersInMachine > 0) {
-            return true;
-        }
-        return false;
+        // Check if we can make change for any possible transaction
+        // We need at least one coin to make any change
+        return quartersInMachine > 0 || dimesInMachine > 0 || nickelsInMachine > 0;
     }
 
     public void returnCoins() {
