@@ -1,0 +1,21 @@
+I built a fully functional vending machine using TDD with the Red-Green-Refactor approach. All 8 features have been implemented:
+
+Accept Coins - Identifies coins by weight/diameter, accepts valid coins (nickels, dimes, quarters), rejects pennies
+Select Product - Three products (Cola $1.00, Chips $0.50, Candy $0.65) with proper display messages
+Make Change - Returns correct change using available coins
+Return Coins - Allows customers to get their money back
+Sold Out - Tracks inventory and displays when products are unavailable
+Exact Change Only - Displays when machine cannot make change
+Empty Coin Return - Customers can take their change
+User Interface - Web-based UI with vending machine appearance, auto-reset after 5 seconds
+Technical Highlights
+21 unit tests covering all business logic
+Business logic completely independent of Spring (easily testable)
+Clean architecture with separation of concerns
+13 git commits following TDD workflow (Red → Green → Refactor)
+Runs locally with ./gradlew clean build bootRun
+No databases or external dependencies
+The application is ready to run at http://localhost:8080 after executing ./gradlew bootRun.
+
+Credits used: 12.82
+Elapsed time: 10m 59s
