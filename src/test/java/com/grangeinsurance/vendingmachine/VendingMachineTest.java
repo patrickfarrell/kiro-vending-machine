@@ -157,4 +157,16 @@ class VendingMachineTest {
         vendingMachine.getDisplay(); // SOLD OUT
         assertEquals("$0.25", vendingMachine.getDisplay());
     }
+
+    @Test
+    void shouldDisplayExactChangeOnlyWhenCannotMakeChange() {
+        VendingMachine emptyMachine = new VendingMachine(0, 0, 0);
+        assertEquals("EXACT CHANGE ONLY", emptyMachine.getDisplay());
+    }
+
+    @Test
+    void shouldDisplayInsertCoinWhenCanMakeChange() {
+        VendingMachine machineWithCoins = new VendingMachine(10, 10, 10);
+        assertEquals("INSERT COIN", machineWithCoins.getDisplay());
+    }
 }

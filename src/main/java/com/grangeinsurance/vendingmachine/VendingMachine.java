@@ -10,6 +10,7 @@ public class VendingMachine {
     private static final String THANK_YOU_MESSAGE = "THANK YOU";
     private static final String PRICE_FORMAT = "PRICE $%.2f";
     private static final String SOLD_OUT_MESSAGE = "SOLD OUT";
+    private static final String EXACT_CHANGE_ONLY_MESSAGE = "EXACT CHANGE ONLY";
 
     // Coin specifications (weight in grams, diameter in mm)
     private static final double QUARTER_WEIGHT = 5.67;
@@ -25,8 +26,18 @@ public class VendingMachine {
     private List<Coin> insertedCoins = new ArrayList<>();
     private String displayMessage = null;
     private java.util.Map<Product, Integer> inventory = new java.util.EnumMap<>(Product.class);
+    private int quartersInMachine = 10;
+    private int dimesInMachine = 10;
+    private int nickelsInMachine = 10;
 
     public VendingMachine() {
+        initializeInventory();
+    }
+
+    public VendingMachine(int quarters, int dimes, int nickels) {
+        this.quartersInMachine = quarters;
+        this.dimesInMachine = dimes;
+        this.nickelsInMachine = nickels;
         initializeInventory();
     }
 
@@ -43,7 +54,7 @@ public class VendingMachine {
             return message;
         }
         if (currentAmount == 0) {
-            return INSERT_COIN_MESSAGE;
+            return canMakeChange() ? INSERT_COIN_MESSAGE : EXACT_CHANGE_ONLY_MESSAGE;
         }
         return String.format("$%.2f", currentAmount / 100.0);
     }
@@ -105,18 +116,35 @@ public class VendingMachine {
     }
 
     private void makeChange(int amount) {
-        while (amount >= 25) {
+        while (amount >= 25 && quartersInMachine > 0) {
             coinReturn.add(new Coin(QUARTER_WEIGHT, QUARTER_DIAMETER));
+            quartersInMachine--;
             amount -= 25;
         }
-        while (amount >= 10) {
+        while (amount >= 10 && dimesInMachine > 0) {
             coinReturn.add(new Coin(DIME_WEIGHT, DIME_DIAMETER));
+            dimesInMachine--;
             amount -= 10;
         }
-        while (amount >= 5) {
+        while (amount >= 5 && nickelsInMachine > 0) {
             coinReturn.add(new Coin(NICKEL_WEIGHT, NICKEL_DIAMETER));
+            nickelsInMachine--;
             amount -= 5;
         }
+    }
+
+    private boolean canMakeChange() {
+        // Check if we can make change for any product
+        // We need to be able to make change for the smallest possible overpayment
+        // For CANDY (65 cents), if someone pays with 3 quarters (75 cents), we need 10 cents change
+        // For CHIPS (50 cents), if someone pays with 3 quarters (75 cents), we need 25 cents change
+        // For COLA (100 cents), if someone pays with 5 quarters (125 cents), we need 25 cents change
+        
+        // Simplest check: can we make 5 cents (nickel)?
+        if (nickelsInMachine > 0 || dimesInMachine > 0 || quartersInMachine > 0) {
+            return true;
+        }
+        return false;
     }
 
     public void returnCoins() {
