@@ -169,4 +169,23 @@ class VendingMachineTest {
         VendingMachine machineWithCoins = new VendingMachine(10, 10, 10);
         assertEquals("INSERT COIN", machineWithCoins.getDisplay());
     }
+
+    @Test
+    void shouldEmptyCoinReturn() {
+        vendingMachine.insertCoin(2.50, 19.05); // penny (rejected)
+        assertEquals(1, vendingMachine.getCoinReturn().size());
+        vendingMachine.emptyCoinReturn();
+        assertEquals(0, vendingMachine.getCoinReturn().size());
+    }
+
+    @Test
+    void shouldEmptyCoinReturnWithChange() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.selectProduct("CHIPS"); // $0.50, $0.25 change
+        assertEquals(1, vendingMachine.getCoinReturn().size());
+        vendingMachine.emptyCoinReturn();
+        assertEquals(0, vendingMachine.getCoinReturn().size());
+    }
 }

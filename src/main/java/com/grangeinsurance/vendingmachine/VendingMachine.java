@@ -144,4 +144,8 @@ public class VendingMachine {
         insertedCoins.clear();
         currentAmount = 0;
     }
+
+    public void emptyCoinReturn() {
+        coinReturn.clear();
+    }
 }
