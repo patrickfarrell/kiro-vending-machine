@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vending Machine</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .vending-machine {
+            background: #2c3e50;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+        }
+        .display {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 24px;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            min-height: 30px;
+            border: 3px solid #34495e;
+        }
+        .products {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .product-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .product-btn:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        .coins {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        .coin-btn {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s;
+            width: 70px;
+            height: 70px;
+        }
+        .coin-btn:hover {
+            background: #e67e22;
+            transform: scale(1.1);
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .control-btn {
+            flex: 1;
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .control-btn:hover {
+            background: #2980b9;
+        }
+        .coin-return {
+            background: #34495e;
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+    </style>
+</head>
+<body>
+    <div class="vending-machine">
+        <h1>🥤 VENDING MACHINE</h1>
+        
+        <div class="display" id="display" th:text="${display}">INSERT COIN</div>
+        
+        <div class="products">
+            <button class="product-btn" onclick="selectProduct('COLA')">
+                🥤<br>COLA<br>$1.00
+            </button>
+            <button class="product-btn" onclick="selectProduct('CHIPS')">
+                🍟<br>CHIPS<br>$0.50
+            </button>
+            <button class="product-btn" onclick="selectProduct('CANDY')">
+                🍬<br>CANDY<br>$0.65
+            </button>
+        </div>
+        
+        <div class="coins">
+            <button class="coin-btn" onclick="insertCoin('QUARTER')">25¢</button>
+            <button class="coin-btn" onclick="insertCoin('DIME')">10¢</button>
+            <button class="coin-btn" onclick="insertCoin('NICKEL')">5¢</button>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="returnCoins()">Return Coins</button>
+            <button class="control-btn" onclick="emptyCoinReturn()">Take Change</button>
+        </div>
+        
+        <div class="coin-return">
+            Coin Return: <span id="coinReturnCount" th:text="${coinReturnCount}">0</span> coins
+        </div>
+    </div>
+
+    <script>
+        let thankYouTimeout = null;
+
+        function updateDisplay(state) {
+            document.getElementById('display').textContent = state.display;
+            document.getElementById('coinReturnCount').textContent = state.coinReturnCount;
+            
+            // Reset to default after 5 seconds if THANK YOU is displayed
+            if (state.display === 'THANK YOU') {
+                if (thankYouTimeout) {
+                    clearTimeout(thankYouTimeout);
+                }
+                thankYouTimeout = setTimeout(() => {
+                    fetch('/state')
+                        .then(response => response.json())
+                        .then(data => updateDisplay(data));
+                }, 5000);
+            }
+        }
+
+        function insertCoin(coinType) {
+            fetch('/insertCoin', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'coinType=' + coinType
+            })
+            .then(response => response.json())
+            .then(data => updateDisplay(data));
+        }
+
+        function selectProduct(product) {
+            fetch('/selectProduct', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'product=' + product
+            })
+            .then(response => response.json())
+            .then(data => updateDisplay(data));
+        }
+
+        function returnCoins() {
+            fetch('/returnCoins', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => updateDisplay(data));
+        }
+
+        function emptyCoinReturn() {
+            fetch('/emptyCoinReturn', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => updateDisplay(data));
+        }
+    </script>
+</body>
+</html>
