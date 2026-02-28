@@ -21,6 +21,7 @@ public class VendingMachine {
 
     private int currentAmount = 0; // Amount in cents
     private List<Coin> coinReturn = new ArrayList<>();
+    private List<Coin> insertedCoins = new ArrayList<>();
     private String displayMessage = null;
 
     public String getDisplay() {
@@ -37,10 +38,12 @@ public class VendingMachine {
 
     public void insertCoin(double weight, double diameter) {
         int coinValue = identifyCoin(weight, diameter);
+        Coin coin = new Coin(weight, diameter);
         if (coinValue > 0) {
             currentAmount += coinValue;
+            insertedCoins.add(coin);
         } else {
-            coinReturn.add(new Coin(weight, diameter));
+            coinReturn.add(coin);
         }
     }
 
@@ -71,6 +74,7 @@ public class VendingMachine {
         if (currentAmount >= selectedProduct.getPrice()) {
             int change = currentAmount - selectedProduct.getPrice();
             currentAmount = 0;
+            insertedCoins.clear();
             displayMessage = THANK_YOU_MESSAGE;
             if (change > 0) {
                 makeChange(change);
@@ -93,5 +97,11 @@ public class VendingMachine {
             coinReturn.add(new Coin(NICKEL_WEIGHT, NICKEL_DIAMETER));
             amount -= 5;
         }
+    }
+
+    public void returnCoins() {
+        coinReturn.addAll(insertedCoins);
+        insertedCoins.clear();
+        currentAmount = 0;
     }
 }

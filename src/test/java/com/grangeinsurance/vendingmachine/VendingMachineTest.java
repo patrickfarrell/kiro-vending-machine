@@ -118,4 +118,19 @@ class VendingMachineTest {
         // Should have $0.25 in change
         assertEquals(1, vendingMachine.getCoinReturn().size());
     }
+
+    @Test
+    void shouldReturnCoinsWhenReturnButtonPressed() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.insertCoin(2.27, 17.91); // dime
+        vendingMachine.returnCoins();
+        assertEquals(2, vendingMachine.getCoinReturn().size());
+    }
+
+    @Test
+    void shouldDisplayInsertCoinAfterReturningCoins() {
+        vendingMachine.insertCoin(5.67, 24.26); // quarter
+        vendingMachine.returnCoins();
+        assertEquals("INSERT COIN", vendingMachine.getDisplay());
+    }
 }
