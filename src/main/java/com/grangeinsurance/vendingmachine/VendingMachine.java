@@ -16,8 +16,14 @@ public class VendingMachine {
 
     private int currentAmount = 0; // Amount in cents
     private List<Coin> coinReturn = new ArrayList<>();
+    private String displayMessage = null;
 
     public String getDisplay() {
+        if (displayMessage != null) {
+            String message = displayMessage;
+            displayMessage = null;
+            return message;
+        }
         if (currentAmount == 0) {
             return "INSERT COIN";
         }
@@ -53,5 +59,19 @@ public class VendingMachine {
     private boolean matchesCoin(double weight, double diameter, double expectedWeight, double expectedDiameter) {
         return Math.abs(weight - expectedWeight) < TOLERANCE && 
                Math.abs(diameter - expectedDiameter) < TOLERANCE;
+    }
+
+    public void selectProduct(String product) {
+        Product selectedProduct = Product.valueOf(product);
+        if (currentAmount >= selectedProduct.getPrice()) {
+            currentAmount -= selectedProduct.getPrice();
+            displayMessage = "THANK YOU";
+            if (currentAmount > 0) {
+                // Change will be handled in Make Change feature
+            }
+            currentAmount = 0;
+        } else {
+            displayMessage = String.format("PRICE $%.2f", selectedProduct.getPrice() / 100.0);
+        }
     }
 }
